@@ -18,7 +18,7 @@ const projectSchema = z.object({
   liveUrl: z.string().url().optional().or(z.literal(""))
 });
 
-export async function createProject(formData: FormData): Promise<never> {
+export async function createProject(formData: FormData): Promise<{ error: string } | never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -35,7 +35,7 @@ export async function createProject(formData: FormData): Promise<never> {
   const parsed = projectSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw new Error("Ugyldige felter");
+    return { error: "Ugyldige felter. Tjek alle påkrævede felter." };
   }
 
   const { techStack, githubUrl, liveUrl, longDescription, ...data } = parsed.data;
@@ -55,7 +55,7 @@ export async function createProject(formData: FormData): Promise<never> {
   redirect("/admin/projects");
 }
 
-export async function updateProject(id: string, formData: FormData): Promise<never> {
+export async function updateProject(id: string, formData: FormData): Promise<{ error: string } | never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -72,7 +72,7 @@ export async function updateProject(id: string, formData: FormData): Promise<nev
   const parsed = projectSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw new Error("Ugyldige felter");
+    return { error: "Ugyldige felter. Tjek alle påkrævede felter." };
   }
 
   const { techStack, githubUrl, liveUrl, longDescription, ...data } = parsed.data;

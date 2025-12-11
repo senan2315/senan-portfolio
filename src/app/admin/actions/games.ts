@@ -16,7 +16,7 @@ const gameSchema = z.object({
   isReleased: z.boolean().default(false)
 });
 
-export async function createGame(formData: FormData): Promise<never> {
+export async function createGame(formData: FormData): Promise<{ error: string } | never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -31,7 +31,7 @@ export async function createGame(formData: FormData): Promise<never> {
   const parsed = gameSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw new Error("Ugyldige felter");
+    return { error: "Ugyldige felter. Tjek alle påkrævede felter." };
   }
 
   const { repoUrl, longDescription, engine, ...data } = parsed.data;
@@ -50,7 +50,7 @@ export async function createGame(formData: FormData): Promise<never> {
   redirect("/admin/games");
 }
 
-export async function updateGame(id: string, formData: FormData): Promise<never> {
+export async function updateGame(id: string, formData: FormData): Promise<{ error: string } | never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -65,7 +65,7 @@ export async function updateGame(id: string, formData: FormData): Promise<never>
   const parsed = gameSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw new Error("Ugyldige felter");
+    return { error: "Ugyldige felter. Tjek alle påkrævede felter." };
   }
 
   const { repoUrl, longDescription, engine, ...data } = parsed.data;
