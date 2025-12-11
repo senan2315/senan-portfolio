@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/Sidebar";
 
 export default async function AdminLayout({
@@ -11,7 +10,7 @@ export default async function AdminLayout({
 
   // Allow login page to render without session
   // Middleware handles the actual protection
-  if (!session) {
+  if (!session?.user) {
     return <>{children}</>;
   }
 
