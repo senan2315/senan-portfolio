@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectType {
+  WEB
+  TOOL
+  EXPERIMENT
+  GAME
+  OTHER
+}
+
+enum ProjectStatus {
+  IN_PROGRESS
+  RELEASED
+  ARCHIVED
+}
+
+enum GameStatus {
+  IDEA
+  PROTOTYPE
+  IN_DEVELOPMENT
+  RELEASED
+}
+
+enum CvCategory {
+  EDUCATION
+  EXPERIENCE
+  SKILL
+  OTHER
+}
+
+model Project {
+  id               String         @id @default(uuid())
+  slug             String         @unique
+  title            String
+  shortDescription String
+  longDescription  String?
+  type             ProjectType
+  techStack        String[]
+  status           ProjectStatus
+  featured         Boolean        @default(false)
+  githubUrl        String?
+  liveUrl          String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Game {
+  id               String     @id @default(uuid())
+  slug             String     @unique
+  title            String
+  shortDescription String
+  longDescription  String?
+  engine           String?
+  status           GameStatus
+  repoUrl          String?
+  isReleased       Boolean    @default(false)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+model AiToolUsage {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  role        String
+  link        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CvEntry {
+  id          String      @id @default(uuid())
+  category    CvCategory
+  title       String
+  organization String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+}
+
