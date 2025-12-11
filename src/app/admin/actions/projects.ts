@@ -18,7 +18,7 @@ const projectSchema = z.object({
   liveUrl: z.string().url().optional().or(z.literal(""))
 });
 
-export async function createProject(formData: FormData) {
+export async function createProject(formData: FormData): Promise<never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -35,7 +35,7 @@ export async function createProject(formData: FormData) {
   const parsed = projectSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter", issues: parsed.error.issues };
+    throw new Error("Ugyldige felter");
   }
 
   const { techStack, githubUrl, liveUrl, longDescription, ...data } = parsed.data;
@@ -55,7 +55,7 @@ export async function createProject(formData: FormData) {
   redirect("/admin/projects");
 }
 
-export async function updateProject(id: string, formData: FormData) {
+export async function updateProject(id: string, formData: FormData): Promise<never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -72,7 +72,7 @@ export async function updateProject(id: string, formData: FormData) {
   const parsed = projectSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter", issues: parsed.error.issues };
+    throw new Error("Ugyldige felter");
   }
 
   const { techStack, githubUrl, liveUrl, longDescription, ...data } = parsed.data;
@@ -93,7 +93,7 @@ export async function updateProject(id: string, formData: FormData) {
   redirect("/admin/projects");
 }
 
-export async function deleteProject(id: string) {
+export async function deleteProject(id: string): Promise<void> {
   await prisma.project.delete({ where: { id } });
   revalidatePath("/admin/projects");
   revalidatePath("/");

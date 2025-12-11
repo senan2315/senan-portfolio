@@ -16,7 +16,7 @@ const gameSchema = z.object({
   isReleased: z.boolean().default(false)
 });
 
-export async function createGame(formData: FormData) {
+export async function createGame(formData: FormData): Promise<never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -31,7 +31,7 @@ export async function createGame(formData: FormData) {
   const parsed = gameSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter", issues: parsed.error.issues };
+    throw new Error("Ugyldige felter");
   }
 
   const { repoUrl, longDescription, engine, ...data } = parsed.data;
@@ -50,7 +50,7 @@ export async function createGame(formData: FormData) {
   redirect("/admin/games");
 }
 
-export async function updateGame(id: string, formData: FormData) {
+export async function updateGame(id: string, formData: FormData): Promise<never> {
   const raw = {
     slug: formData.get("slug") as string,
     title: formData.get("title") as string,
@@ -65,7 +65,7 @@ export async function updateGame(id: string, formData: FormData) {
   const parsed = gameSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter", issues: parsed.error.issues };
+    throw new Error("Ugyldige felter");
   }
 
   const { repoUrl, longDescription, engine, ...data } = parsed.data;
@@ -85,7 +85,7 @@ export async function updateGame(id: string, formData: FormData) {
   redirect("/admin/games");
 }
 
-export async function deleteGame(id: string) {
+export async function deleteGame(id: string): Promise<void> {
   await prisma.game.delete({ where: { id } });
   revalidatePath("/admin/games");
   revalidatePath("/");

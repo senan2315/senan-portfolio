@@ -14,7 +14,7 @@ const cvEntrySchema = z.object({
   description: z.string().max(2000).optional()
 });
 
-export async function createCvEntry(formData: FormData) {
+export async function createCvEntry(formData: FormData): Promise<void> {
   const raw = {
     category: formData.get("category") as string,
     title: formData.get("title") as string,
@@ -28,7 +28,7 @@ export async function createCvEntry(formData: FormData) {
   const parsed = cvEntrySchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter" };
+    throw new Error("Ugyldige felter");
   }
 
   const { startDate, endDate, location, description, ...data } = parsed.data;
@@ -45,10 +45,9 @@ export async function createCvEntry(formData: FormData) {
 
   revalidatePath("/admin/cv");
   revalidatePath("/");
-  return { success: true };
 }
 
-export async function updateCvEntry(id: string, formData: FormData) {
+export async function updateCvEntry(id: string, formData: FormData): Promise<void> {
   const raw = {
     category: formData.get("category") as string,
     title: formData.get("title") as string,
@@ -62,7 +61,7 @@ export async function updateCvEntry(id: string, formData: FormData) {
   const parsed = cvEntrySchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter" };
+    throw new Error("Ugyldige felter");
   }
 
   const { startDate, endDate, location, description, ...data } = parsed.data;
@@ -80,10 +79,9 @@ export async function updateCvEntry(id: string, formData: FormData) {
 
   revalidatePath("/admin/cv");
   revalidatePath("/");
-  return { success: true };
 }
 
-export async function deleteCvEntry(id: string) {
+export async function deleteCvEntry(id: string): Promise<void> {
   await prisma.cvEntry.delete({ where: { id } });
   revalidatePath("/admin/cv");
   revalidatePath("/");

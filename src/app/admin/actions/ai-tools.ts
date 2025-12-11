@@ -11,7 +11,7 @@ const aiToolSchema = z.object({
   link: z.string().url().optional().or(z.literal(""))
 });
 
-export async function createAiTool(formData: FormData) {
+export async function createAiTool(formData: FormData): Promise<void> {
   const raw = {
     name: formData.get("name") as string,
     description: formData.get("description") as string,
@@ -22,7 +22,7 @@ export async function createAiTool(formData: FormData) {
   const parsed = aiToolSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter" };
+    throw new Error("Ugyldige felter");
   }
 
   const { link, ...data } = parsed.data;
@@ -36,10 +36,9 @@ export async function createAiTool(formData: FormData) {
 
   revalidatePath("/admin/ai-tools");
   revalidatePath("/");
-  return { success: true };
 }
 
-export async function updateAiTool(id: string, formData: FormData) {
+export async function updateAiTool(id: string, formData: FormData): Promise<void> {
   const raw = {
     name: formData.get("name") as string,
     description: formData.get("description") as string,
@@ -50,7 +49,7 @@ export async function updateAiTool(id: string, formData: FormData) {
   const parsed = aiToolSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: "Ugyldige felter" };
+    throw new Error("Ugyldige felter");
   }
 
   const { link, ...data } = parsed.data;
@@ -65,10 +64,9 @@ export async function updateAiTool(id: string, formData: FormData) {
 
   revalidatePath("/admin/ai-tools");
   revalidatePath("/");
-  return { success: true };
 }
 
-export async function deleteAiTool(id: string) {
+export async function deleteAiTool(id: string): Promise<void> {
   await prisma.aiToolUsage.delete({ where: { id } });
   revalidatePath("/admin/ai-tools");
   revalidatePath("/");
